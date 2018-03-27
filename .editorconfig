@@ -10,12 +10,3 @@ charset = utf-8
 
 [*.py]
 max_line_length = 100
-
-[*.conf]
-indent_size = 2
-
-[*.js]
-indent_size = 2
-
-[*.scss]
-indent_size = 2
