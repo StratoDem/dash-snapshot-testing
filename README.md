@@ -18,7 +18,7 @@ $ pip install dash-snapshot-teting
 ```python
 import dash_html_components as html
 
-from snapshot_test import DashSnapshotTestCase
+from dash_snapshot_testing.snapshot_test import DashSnapshotTestCase
 
 
 class MyUnitTestCase(DashSnapshotTestCase):
