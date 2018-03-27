@@ -1,0 +1,4 @@
+-r ./requirements.txt
+
+dash-html-components
+dash-renderer
