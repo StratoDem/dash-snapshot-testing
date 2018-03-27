@@ -10,7 +10,11 @@ output unexpectedly.
 
 To learn more about snapshot testing in general, see a much more elaborate explanation from the [Facebook Jest site](https://facebook.github.io/jest/docs/en/snapshot-testing.html)
 
-## Usage
+## Installation and usage
+```bash
+$ pip install dash-snapshot-teting
+```
+
 ```python
 import dash_html_components as html
 
