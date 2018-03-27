@@ -1,10 +1,10 @@
 """
 StratoDem Analytics : SnapshotTest
 Principal Author(s) : Eric Linden
-Secondary Author(s) : 
+Secondary Author(s) :
 Description :
 
-Notes : 
+Notes :
 
 March 26, 2018
 """
@@ -17,7 +17,12 @@ import unittest
 from dash.development.base_component import Component
 
 
-class DashSnapshotUnitTest(unittest.TestCase):
+__all__ = ['DashSnapshotTestCase']
+
+
+class DashSnapshotTestCase(unittest.TestCase):
+    snapshots_dir = None
+
     def assertSnapshotEqual(self, component: Component, file_id: str) -> None:
         """
         Tests the supplied component against the specified JSON file snapshot, if it exists.
@@ -37,19 +42,21 @@ class DashSnapshotUnitTest(unittest.TestCase):
         -------
         None
         """
-        assert isinstance(component, Component)
-        assert isinstance(file_id, str)
+        assert isinstance(component, Component), 'Component passed in must be Dash Component'
+        assert isinstance(file_id, str), 'must pass in a file id to use as unique file ID'
 
         filename = self.__get_filename(file_id=file_id)
 
         component_json = component.to_plotly_json()
 
         if os.path.exists(filename):
+            # Load a dumped JSON for the passed-in component, to ensure matches standard format
             expected_dict = json.loads(
                 json.dumps(component_json, cls=plotly.utils.PlotlyJSONEncoder))
             self.assertEqual(self.__load_snapshot(filename=filename), expected_dict)
         else:
-            with open(filename, 'w+') as file:
+            # Component did not already exist, so we'll write to the file
+            with open(filename, 'w') as file:
                 json.dump(component_json, file, cls=plotly.utils.PlotlyJSONEncoder)
 
     def __get_filename(self, file_id: str) -> str:
@@ -68,7 +75,9 @@ class DashSnapshotUnitTest(unittest.TestCase):
         """
         assert isinstance(file_id, str)
 
-        return os.path.join(self.__get_snapshots_dir(), '{}-{}.json'.format(self.__name__, file_id))
+        return os.path.join(
+            self.__get_snapshots_dir(),
+            '{}-{}.json'.format(self.__class__.__name__, file_id))
 
     @staticmethod
     def __load_snapshot(filename: str) -> dict:
@@ -89,8 +98,8 @@ class DashSnapshotUnitTest(unittest.TestCase):
         with open(filename, 'r') as f:
             return json.load(f)
 
-    @staticmethod
-    def __get_snapshots_dir() -> str:
+    @classmethod
+    def __get_snapshots_dir(cls) -> str:
         """
         Checks for the existence of the snapshots directory, and creates it if it is not found.
         It then returns the directory path.
@@ -99,9 +108,15 @@ class DashSnapshotUnitTest(unittest.TestCase):
         -------
         A string containing the path of the snapshots directory.
         """
-        directory = os.path.join(os.curdir, 'snapshots')
+        if cls.snapshots_dir is None:
+            directory = os.path.join(os.curdir, '__snapshots__')
 
-        if not os.path.exists(directory):
-            os.mkdir(directory)
+            if not os.path.exists(directory):
+                os.mkdir(directory)
 
-        return directory
+            return directory
+        else:
+            if not os.path.exists(cls.snapshots_dir):
+                os.mkdir(cls.snapshots_dir)
+
+            return cls.snapshots_dir

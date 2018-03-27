@@ -1,10 +1,10 @@
 """
 StratoDem Analytics : setup
 Principal Author(s) : Eric Linden
-Secondary Author(s) : 
+Secondary Author(s) :
 Description :
 
-Notes : 
+Notes :
 
 March 27, 2018
 """
@@ -16,9 +16,7 @@ setup(
     version='1.0.0',
     author='Michael Clawar, Eric Linden',
     author_email='tech@stratodem.com',
-    packages=[
-        'SnapshotTest.DashSnapshotUnitTest',
-    ],
+    packages=['snapshot_test'],
     license='(c) 2018 StratoDem Analytics. All rights reserved.',
     description='Dash snapshot testing package',
     url='https://github.com/StratoDem/dash-snapshot-testing',
