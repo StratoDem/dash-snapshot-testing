@@ -18,38 +18,87 @@ from dash.development.base_component import Component
 
 
 class DashSnapshotUnitTest(unittest.TestCase):
-    def assertSnapshotEqual(self, component: Component) -> None:
+    def assertSnapshotEqual(self, component: Component, file_id: str) -> None:
+        """
+        Tests the supplied component against the specified JSON file snapshot, if it exists.
+        If the component and the snapshot match, the test passes. If the specified file is not
+        found, it is created and the test passes. This test will only fail if the file already
+        exists, and the component-as-JSON does not match the contents of the file.
 
-        # TODO use hash of inputs to create unique pathname?
-        # just self.__name__ by itself won't create enough unique names for the various input tests
-        filename = self.__get_filename()
+        Parameters
+        ----------
+        component: Component
+            The output of a Dash component that will be rendered to the page
+        file_id: str
+            A string ID used to distinguish the multiple JSON files that may be used as
+            part of a single component's test cases
+
+        Returns
+        -------
+        None
+        """
+
+        filename = self.__get_filename(file_id=file_id)
 
         component_json = component.to_plotly_json()
 
         if os.path.exists(filename):
             expected_dict = json.loads(
                 json.dumps(component_json, cls=plotly.utils.PlotlyJSONEncoder))
-            self.assertEqual(self.__load_snapshot(), expected_dict)
+            self.assertEqual(self.__load_snapshot(filename=filename), expected_dict)
         else:
             with open(filename, 'w+') as file:
                 json.dump(component_json, file, cls=plotly.utils.PlotlyJSONEncoder)
 
-    def __get_filename(self):
-        return os.path.join(self.__get_snapshots_dir(), '{}.json'.format(self.__name__))
+    def __get_filename(self, file_id: str) -> str:
+        """
+        Builds and returns the path for the specific JSON file used in this test.
 
-    def __load_snapshot(self):
-        with open(self.__get_filename(), 'r') as f:
+        Parameters
+        ----------
+        file_id: str
+            A string ID used to distinguish the multiple JSON files that may be used as
+            part of a single component's test cases
+
+        Returns
+        -------
+        A string containing the path to the file.
+        """
+        return os.path.join(self.__get_snapshots_dir(), '{}-{}.json'.format(self.__name__, file_id))
+
+    @staticmethod
+    def __load_snapshot(filename: str) -> dict:
+        """
+        Opens the JSON file at the specified location and returns its contents in dict form.
+
+        Parameters
+        ----------
+        filename: str
+            The path to the JSON file
+
+        Returns
+        -------
+        A dict of the JSON file contents.
+        """
+        with open(filename, 'r') as f:
             return json.load(f)
 
-    def __get_snapshots_dir(self):
+    @staticmethod
+    def __get_snapshots_dir() -> str:
+        """
+        Checks for the existence of the snapshots directory, and creates it if it is not found.
+        It then returns the directory path.
+
+        Returns
+        -------
+        A string containing the path of the snapshots directory.
+        """
         directory = os.path.join(os.curdir, 'snapshots')
 
         if not os.path.exists(directory):
             os.mkdir(directory)
 
         return directory
-
-    # --- All the helpers here
 
 
 class MyComponentNameTest(DashSnapshotUnitTest):
