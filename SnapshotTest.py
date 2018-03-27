@@ -99,10 +99,3 @@ class DashSnapshotUnitTest(unittest.TestCase):
             os.mkdir(directory)
 
         return directory
-
-
-# --- Example usage --- #
-# class MyComponentNameTest(DashSnapshotUnitTest):
-#     def test_func(self) -> None:
-#
-#         self.assertSnapshotEqual()
