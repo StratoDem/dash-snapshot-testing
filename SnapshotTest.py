@@ -101,7 +101,8 @@ class DashSnapshotUnitTest(unittest.TestCase):
         return directory
 
 
-class MyComponentNameTest(DashSnapshotUnitTest):
-    def test_func(self) -> None:
-
-        self.assertSnapshotEqual()
+# --- Example usage --- #
+# class MyComponentNameTest(DashSnapshotUnitTest):
+#     def test_func(self) -> None:
+#
+#         self.assertSnapshotEqual()
