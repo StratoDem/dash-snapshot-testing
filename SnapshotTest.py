@@ -37,6 +37,8 @@ class DashSnapshotUnitTest(unittest.TestCase):
         -------
         None
         """
+        assert isinstance(component, Component)
+        assert isinstance(file_id, str)
 
         filename = self.__get_filename(file_id=file_id)
 
@@ -64,6 +66,8 @@ class DashSnapshotUnitTest(unittest.TestCase):
         -------
         A string containing the path to the file.
         """
+        assert isinstance(file_id, str)
+
         return os.path.join(self.__get_snapshots_dir(), '{}-{}.json'.format(self.__name__, file_id))
 
     @staticmethod
@@ -80,6 +84,8 @@ class DashSnapshotUnitTest(unittest.TestCase):
         -------
         A dict of the JSON file contents.
         """
+        assert isinstance(filename, str)
+
         with open(filename, 'r') as f:
             return json.load(f)
 
