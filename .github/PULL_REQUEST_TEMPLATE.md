@@ -14,3 +14,5 @@ Closes #
 
 
 ## Screenshots (if appropriate):
+
+## Update version and CHANGELOG
