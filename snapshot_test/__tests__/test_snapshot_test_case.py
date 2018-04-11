@@ -17,7 +17,7 @@ from snapshot_test import DashSnapshotTestCase
 
 class MyUnitTestCase(DashSnapshotTestCase):
     def test_component(self):
-        my_component = html.Div([html.P('wow'), html.Span('this works')], id='test-id')
+        my_component = html.Div([html.P('wow!'), html.Span('this works')], id='test-id')
 
         self.assertSnapshotEqual(my_component, 'my-test-unique-id')
 

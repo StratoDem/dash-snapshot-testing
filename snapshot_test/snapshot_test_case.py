@@ -28,7 +28,9 @@ class DashSnapshotTestCase(unittest.TestCase):
         Tests the supplied component against the specified JSON file snapshot, if it exists.
         If the component and the snapshot match, the test passes. If the specified file is not
         found, it is created and the test passes. This test will only fail if the file already
-        exists, and the component-as-JSON does not match the contents of the file.
+        exists, and the component-as-JSON does not match the contents of the file. A Dash user can
+        set the environment variable "UPDATE_DASH_SNAPSHOTS" to True to replace all existing
+        snapshots.
 
         Parameters
         ----------
@@ -50,10 +52,15 @@ class DashSnapshotTestCase(unittest.TestCase):
         component_json = component.to_plotly_json()
 
         if os.path.exists(filename):
-            # Load a dumped JSON for the passed-in component, to ensure matches standard format
-            expected_dict = json.loads(
-                json.dumps(component_json, cls=plotly.utils.PlotlyJSONEncoder))
-            self.assertEqual(self.__load_snapshot(filename=filename), expected_dict)
+            # Check the env variable to see whether snapshots should be replaced
+            if os.environ.get('UPDATE_DASH_SNAPSHOTS') == 'TRUE':
+                with open(filename, 'w') as file:
+                    json.dump(component_json, file, cls=plotly.utils.PlotlyJSONEncoder)
+            else:
+                # Load a dumped JSON for the passed-in component, to ensure matches standard format
+                expected_dict = json.loads(
+                    json.dumps(component_json, cls=plotly.utils.PlotlyJSONEncoder))
+                self.assertEqual(self.__load_snapshot(filename=filename), expected_dict)
         else:
             # Component did not already exist, so we'll write to the file
             with open(filename, 'w') as file:
