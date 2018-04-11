@@ -13,7 +13,7 @@ from setuptools import setup
 
 setup(
     name='dash-snapshot-testing',
-    version='1.0.1',
+    version='1.1.0',
     author='Michael Clawar, Eric Linden',
     author_email='tech@stratodem.com',
     packages=['snapshot_test'],
