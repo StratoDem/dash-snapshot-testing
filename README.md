@@ -85,6 +85,16 @@ This outputs/checks this JSON at `__snapshots_2__/MyOtherUnitTestCase-my-test-un
 }
 ```
 
+### Overwriting snapshots
+To overwrite pre-existing snapshots, [like in Jest](https://facebook.github.io/jest/docs/en/snapshot-testing.html#updating-snapshots), set an environment variable as `UPDATE_DASH_SNAPSHOTS=TRUE`:
+```bash
+# This will run and make new snapshots
+> UPDATE_DASH_SNAPSHOTS=TRUE python -m unittest my_test_module
+# This will run against the previous snapshots
+> python -m unittest my_test_module
+```
+
+### How this works
 At its core, this `unittest.TestCase` compares a JSON-serialized Dash component
 against a previously stored JSON-serialized Dash component, and checks if the `dict`
 objects from `json.loads` are equivalent using `assertEqual`.
