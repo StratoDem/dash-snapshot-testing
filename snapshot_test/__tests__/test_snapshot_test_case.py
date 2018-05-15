@@ -26,6 +26,7 @@ class MyOtherUnitTestCase(DashSnapshotTestCase):
     snapshots_dir = '__snapshots_2__'
 
     def test_component(self):
-        my_component = html.Div([html.P('wow'), html.Span('another one')], id='test-id')
+        # TODO test set to fail intentionally, change back when done
+        my_component = html.Div([html.P('wow'), html.Span('anotherone')], id='test-id')
 
         self.assertSnapshotEqual(my_component, 'my-test-unique-id')

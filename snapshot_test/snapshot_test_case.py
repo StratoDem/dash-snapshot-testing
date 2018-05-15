@@ -10,6 +10,7 @@ March 26, 2018
 """
 
 import json
+import logging
 import os
 import plotly.utils
 import unittest
@@ -28,8 +29,9 @@ class DashSnapshotTestCase(unittest.TestCase):
         Tests the supplied component against the specified JSON file snapshot, if it exists.
         If the component and the snapshot match, the test passes. If the specified file is not
         found, it is created and the test passes. This test will only fail if the file already
-        exists, and the component-as-JSON does not match the contents of the file. A Dash user can
-        set the environment variable "UPDATE_DASH_SNAPSHOTS" to True to replace all existing
+        exists, and the component-as-JSON does not match the contents of the file. In that event,
+        the test will produce a detailed error message showing the differences found. A Dash user
+        can set the environment variable "UPDATE_DASH_SNAPSHOTS" to True to replace all existing
         snapshots.
 
         Parameters
@@ -58,9 +60,20 @@ class DashSnapshotTestCase(unittest.TestCase):
                     json.dump(component_json, file, cls=plotly.utils.PlotlyJSONEncoder)
             else:
                 # Load a dumped JSON for the passed-in component, to ensure matches standard format
-                expected_dict = json.loads(
-                    json.dumps(component_json, cls=plotly.utils.PlotlyJSONEncoder))
-                self.assertEqual(self.__load_snapshot(filename=filename), expected_dict)
+                component_dict = json.loads(json.dumps(component_json,
+                                                  cls=plotly.utils.PlotlyJSONEncoder))
+                snapshot_dict = self.__load_snapshot(filename=filename)
+
+                try:
+                    self.assertEqual(snapshot_dict, component_dict)
+                except AssertionError as e:
+                    error_msg = self.__generate_error_message(
+                        snapshot=snapshot_dict,
+                        component=component_dict)
+                    # Change the error message here to remove the JSON comparison that isn't useful
+                    # Must pass a tuple to e.args otherwise it converts the message into a tuple
+                    e.args = error_msg,
+                    raise e
         else:
             # Component did not already exist, so we'll write to the file
             with open(filename, 'w') as file:
@@ -127,3 +140,80 @@ class DashSnapshotTestCase(unittest.TestCase):
                 os.mkdir(cls.snapshots_dir)
 
             return cls.snapshots_dir
+
+    @classmethod
+    def __generate_error_message(cls, snapshot: dict, component: dict):
+        """
+
+        Parameters
+        ----------
+        snapshot
+        component
+
+        Returns
+        -------
+
+        """
+        assert isinstance(snapshot, dict)
+        assert isinstance(component, dict)
+
+        error_message = 'The following differences were found:\n'
+        cmpnt_strucuture = 'Component skeleton:\n'
+        element_id = 0
+        indentation = 0
+
+        def check_contents(snapshot, component):
+            nonlocal element_id, error_message, cmpnt_strucuture, indentation
+            if isinstance(snapshot, dict) and isinstance(component, dict):
+                indentation += 2
+                pairs = snapshot.items() if len(snapshot) > len(component) else component.items()
+
+                for key, val in snapshot.items():
+                    element_id += 1
+                    # TODO should the entire val be shown here?
+                    # I tried using a conditional to avoid showing certain ones (children and props)
+                    # but couldn't get it right for some reason
+                    cmpnt_strucuture += '{id} - {indent}{key} - {val}\n'.format(
+                        id=element_id,
+                        indent=' ' * indentation,
+                        key=key,
+                        val=val)
+                    if key in component:
+                        if isinstance(val, dict) or isinstance(val, list):
+                            check_contents(snapshot=val, component=component[key])
+                        else:
+                            if val != component[key]:
+                                error_message += cls.__make_error_entry(
+                                    element_id=element_id,
+                                    snapshot=val,
+                                    component=component[key])
+                indentation -= 2
+            elif isinstance(snapshot, list) and isinstance(component, list):
+                if len(snapshot) != len(component):
+                    error_message += cls.__make_error_entry(
+                        element_id=element_id,
+                        snapshot=snapshot,
+                        component=component)
+                else:
+                    for i in range(len(snapshot)):
+                        check_contents(snapshot=snapshot[i], component=component[i])
+            else:
+                if snapshot != component:
+                    error_message += cls.__make_error_entry(
+                        element_id=element_id,
+                        snapshot=snapshot,
+                        component=component)
+
+        check_contents(snapshot=snapshot, component=component)
+
+        logging.error(cmpnt_strucuture)
+        return error_message
+
+    @staticmethod
+    def __make_error_entry(element_id, snapshot, component):
+        return 'Element element_id: {id}\n' \
+               '  Snapshot: {snapshot_value}\n' \
+               '  Component: {component_value}\n'.format(
+                  id=element_id,
+                  snapshot_value=snapshot,
+                  component_value=component)
