@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.2.1 - 2018-05-15
+### Changed
+- Added `long_description` to `setup.py` for PyPI package page
+
 ## 1.2.0 - 2018-05-15
 ### Changed
 - Improves clarity of error messages for large component comparisons
