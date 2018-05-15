@@ -1,0 +1,1 @@
+{"namespace": "dash_html_components", "type": "Div", "props": {"children": [{"namespace": "dash_html_components", "type": "P", "props": {"children": "wow"}}, {"namespace": "dash_html_components", "type": "Span", "props": {"children": "another one"}}], "id": "test-id"}}

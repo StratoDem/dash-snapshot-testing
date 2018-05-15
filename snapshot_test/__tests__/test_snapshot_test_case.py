@@ -36,3 +36,16 @@ class MyOtherUnitTestCase(DashSnapshotTestCase):
         self.assertRaises(
             AssertionError,
             lambda: self.assertSnapshotEqual(my_component, 'my-test-unique-id'))
+
+    def test_component_3(self):
+        my_component = html.Div([html.P('wow'), html.Span([1, 2, 3])], id='test-id')
+
+        self.assertRaises(
+            AssertionError,
+            lambda: self.assertSnapshotEqual(my_component, 'my-test-unique-id'))
+
+        my_component = html.Div([html.P('wow'), html.Span((1, 2, 3))], id='test-id')
+
+        self.assertRaises(
+            AssertionError,
+            lambda: self.assertSnapshotEqual(my_component, 'my-test-unique-id'))
