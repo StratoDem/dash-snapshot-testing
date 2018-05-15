@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.2.2 - 2018-05-15
+### Fixes
+- Adds support for `None` type to comparison method
+
 ## 1.2.1 - 2018-05-15
 ### Changed
 - Added `long_description` to `setup.py` for PyPI package page

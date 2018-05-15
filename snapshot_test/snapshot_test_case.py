@@ -183,7 +183,7 @@ class DashSnapshotTestCase(unittest.TestCase):
                         obj2=obj2[k1],
                         context1=obj1,
                         context2=obj2)
-        elif isinstance(obj1, (str, int, float)):
+        elif isinstance(obj1, (str, int, float)) or obj1 is None:
             if obj1 != obj2:
                 raise DashSnapshotMismatch(
                     '{} != {} {}'.format(
