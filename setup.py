@@ -43,7 +43,7 @@ To learn more about snapshot testing in general, see a much more elaborate expla
 
 ## Installation and usage
 ```bash
-$ pip install dash-snapshot-teting
+$ pip install dash-snapshot-testing
 ```
 
 ```python
