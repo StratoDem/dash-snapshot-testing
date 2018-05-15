@@ -211,7 +211,7 @@ class DashSnapshotTestCase(unittest.TestCase):
 
     @staticmethod
     def __make_error_entry(element_id, snapshot, component):
-        return 'Element element_id: {id}\n' \
+        return 'Element id: {id}\n' \
                '  Snapshot: {snapshot_value}\n' \
                '  Component: {component_value}\n'.format(
                   id=element_id,
